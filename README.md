@@ -102,8 +102,8 @@ xBossBar provides a static API to control BossBars from other plugins.
 ```xml
 <dependencies>
   <dependency>
-    <groupId>org.eldrygo</groupId>
-    <artifactId>XBossbar</artifactId>
+    <groupId>com.github.xDrygo</groupId>
+    <artifactId>xBossBar</artifactId>
     <version>1.0.1</version>
     <scope>provided</scope>
   </dependency>

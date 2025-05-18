@@ -17,48 +17,49 @@ public class XBossBarAPI {
         bossBarManager = manager;
     }
 
-    public static void createBossBar(String name, BossBarModel model) {
-        bossBarManager.createBossBar(name, model);
+    public static void createBossBar(String id, String title, BarColor color, BarStyle style, boolean perplayer) {
+        BossBarModel model = new BossBarModel(title, color, style, 1.0, perplayer);
+        bossBarManager.createBossBar(id, model);
     }
 
-    public static void removeBossBar(String name) {
-        bossBarManager.removeBossBar(name);
+    public static void removeBossBar(String id) {
+        bossBarManager.removeBossBar(id);
     }
 
     public static void clearAllBossBars() {
         bossBarManager.clearAllBossBars();
     }
 
-    public static void addPlayerToBossBar(String name, Player player) {
-        bossBarManager.addPlayerToBossBar(name, player);
+    public static void addPlayerToBossBar(String id, Player player) {
+        bossBarManager.addPlayerToBossBar(id, player);
     }
 
-    public static void removePlayerFromBossBar(String name, Player player) {
-        bossBarManager.removePlayerFromBossBar(name, player);
+    public static void removePlayerFromBossBar(String id, Player player) {
+        bossBarManager.removePlayerFromBossBar(id, player);
     }
 
-    public static void setTitle(String name, String title) {
-        bossBarManager.setTitle(name, title);
+    public static void setTitle(String id, String title) {
+        bossBarManager.setTitle(id, title);
     }
 
-    public static void setProgress(String name, double progress) {
-        bossBarManager.setProgress(name, progress);
+    public static void setProgress(String id, double progress) {
+        bossBarManager.setProgress(id, progress);
     }
 
-    public static void setStyle(String name, BarStyle style) {
-        bossBarManager.setStyle(name, style);
+    public static void setStyle(String id, BarStyle style) {
+        bossBarManager.setStyle(id, style);
     }
 
-    public static void setColor(String name, BarColor color) {
-        bossBarManager.setColor(name, color);
+    public static void setColor(String id, BarColor color) {
+        bossBarManager.setColor(id, color);
     }
 
-    public static BossBar getBossBar(String name) {
-        return bossBarManager.getBossBar(name);
+    public static BossBar getBossBar(String id) {
+        return bossBarManager.getBossBar(id);
     }
 
-    public static BossBarModel getBossBarModel(String name) {
-        return bossBarManager.getBossBarModel(name);
+    public static BossBarModel getBossBarModel(String id) {
+        return bossBarManager.getBossBarModel(id);
     }
 
     public static Set<String> getBossBarNames() {

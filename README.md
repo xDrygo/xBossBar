@@ -8,7 +8,7 @@ A powerful, lightweight, and highly customizable BossBar manager for Spigot & Pa
 - 🎨 Create personalized or global BossBars.
 - 🔧 Modify title, color, style, and progress dynamically.
 - 👥 Add or remove players from bars — individually or all at once.
-- 📌 Placeholder support for dynamic titles (e.g. `%player%`).
+- 📌 Placeholder support for dynamic titles (e.g. `%player_name%`).
 - 🧠 Smart tab-completion for all commands.
 - ♻️ Live updates that don’t interrupt players not currently viewing the bar.
 - 📂 Fully customizable messages in `messages.yml`.
@@ -127,7 +127,7 @@ dependencyResolutionManagement {
 }
 
 dependencies {
-  implementation 'com.github.xDrygo:xBossBar:1.0'
+  implementation 'com.github.xDrygo:xBossBar:1.0.1'
 }
 ```
 ### Add Gradle dependency (settings.gradle.kts)
@@ -141,7 +141,7 @@ dependencyResolutionManagement {
 }
 
 dependencies {
-  implementation("com.github.xDrygo:xBossBar:1.0")
+  implementation("com.github.xDrygo:xBossBar:1.0.1")
 }
 ```
 ### Available Methods

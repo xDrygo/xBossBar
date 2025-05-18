@@ -1,0 +1,44 @@
+name: xBossBar
+main: org.eldrygo.XBossBar.XBossBar
+version: 1.0
+api-version: 1.20
+authors: [Drygo]
+softdepend:
+  - PlaceholderAPI
+commands:
+  xbossbar:
+    description: "xBossBar plugin command."
+    aliases: [xbb]
+permissions:
+  xbossbar.command:
+    default: op
+  xbossbar.admin:
+    default: op
+    children:
+      xbossbar.command.create: true
+      xbossbar.command.settitle: true
+      xbossbar.command.setstyle: true
+      xbossbar.command.setcolor: true
+      xbossbar.command.addplayer: true
+      xbossbar.command.removeplayer: true
+      xbossbar.command.remove: true
+      xbossbar.command.info: true
+      xbossbar.command.help: true
+  xbossbar.command.create:
+    default: op
+  xbossbar.command.settitle:
+    default: op
+  xbossbar.command.setstyle:
+    default: op
+  xbossbar.command.setcolor:
+    default: op
+  xbossbar.command.addplayer:
+    default: op
+  xbossbar.command.removeplayer:
+    default: op
+  xbossbar.command.remove:
+    default: op
+  xbossbar.command.info:
+    default: op
+  xbossbar.command.help:
+    default: op

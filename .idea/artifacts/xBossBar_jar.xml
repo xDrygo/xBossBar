@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="xBossBar:jar">
+    <output-path>$USER_HOME$/Desktop</output-path>
+    <root id="archive" name="xBossBar.jar">
+      <element id="module-output" name="xBossBar" />
+    </root>
+  </artifact>
+</component>

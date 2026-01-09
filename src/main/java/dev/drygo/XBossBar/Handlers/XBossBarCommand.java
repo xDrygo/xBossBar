@@ -1,4 +1,4 @@
-package org.eldrygo.XBossBar.Handlers;
+package dev.drygo.XBossBar.Handlers;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -7,12 +7,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
-import org.eldrygo.XBossBar.Managers.ConfigManager;
-import org.eldrygo.XBossBar.Models.BossBarModel;
-import org.eldrygo.XBossBar.Utils.ChatUtils;
-import org.eldrygo.XBossBar.Utils.LoadUtils;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.XBossBar.Managers.ConfigManager;
+import dev.drygo.XBossBar.Models.BossBarModel;
+import dev.drygo.XBossBar.Utils.ChatUtils;
+import dev.drygo.XBossBar.Utils.LoadUtils;
+import dev.drygo.XBossBar.XBossBar;
 import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 

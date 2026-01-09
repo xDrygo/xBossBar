@@ -1,11 +1,11 @@
-package org.eldrygo.XBossBar.Models;
+package dev.drygo.XBossBar.Models;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import org.eldrygo.XBossBar.Utils.ChatUtils;
-import org.eldrygo.XBossBar.Utils.DevUtils;
+import dev.drygo.XBossBar.Utils.ChatUtils;
+import dev.drygo.XBossBar.Utils.DevUtils;
 
 import java.util.Map;
 import java.util.UUID;

@@ -1,11 +1,11 @@
-package org.eldrygo.XBossBar.Hooks;
+package dev.drygo.XBossBar.Hooks;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
-import org.eldrygo.XBossBar.Models.BossBarModel;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.XBossBar.Models.BossBarModel;
+import dev.drygo.XBossBar.XBossBar;
 
 public class XBossBarExpansion extends PlaceholderExpansion {
 

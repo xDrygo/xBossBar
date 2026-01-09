@@ -1,11 +1,11 @@
-package org.eldrygo.XBossBar.API;
+package dev.drygo.XBossBar.API;
 
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
-import org.eldrygo.XBossBar.Models.BossBarModel;
+import dev.drygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.XBossBar.Models.BossBarModel;
 
 import java.util.Set;
 

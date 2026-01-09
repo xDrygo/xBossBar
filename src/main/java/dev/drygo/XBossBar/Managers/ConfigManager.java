@@ -1,9 +1,9 @@
-package org.eldrygo.XBossBar.Managers;
+package dev.drygo.XBossBar.Managers;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.eldrygo.XBossBar.Utils.ChatUtils;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Utils.ChatUtils;
+import dev.drygo.XBossBar.XBossBar;
 
 import java.io.File;
 

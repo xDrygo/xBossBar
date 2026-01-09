@@ -1,10 +1,10 @@
-package org.eldrygo.XBossBar.Utils;
+package dev.drygo.XBossBar.Utils;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
-import org.eldrygo.XBossBar.Managers.ConfigManager;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Managers.ConfigManager;
+import dev.drygo.XBossBar.XBossBar;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

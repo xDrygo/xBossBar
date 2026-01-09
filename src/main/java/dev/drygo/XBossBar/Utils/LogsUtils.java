@@ -1,7 +1,7 @@
-package org.eldrygo.XBossBar.Utils;
+package dev.drygo.XBossBar.Utils;
 
 import org.bukkit.Bukkit;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.XBossBar;
 
 public class LogsUtils {
     private static XBossBar plugin;

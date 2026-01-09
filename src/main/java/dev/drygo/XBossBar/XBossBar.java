@@ -1,12 +1,11 @@
-package org.eldrygo.XBossBar;
+package dev.drygo.XBossBar;
 
 import org.bukkit.plugin.java.JavaPlugin;
-import org.eldrygo.XBossBar.API.XBossBarAPI;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
-import org.eldrygo.XBossBar.Managers.ConfigManager;
-import org.eldrygo.XBossBar.Utils.ChatUtils;
-import org.eldrygo.XBossBar.Utils.LoadUtils;
-import org.eldrygo.XBossBar.Utils.LogsUtils;
+import dev.drygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.XBossBar.Managers.ConfigManager;
+import dev.drygo.XBossBar.Utils.ChatUtils;
+import dev.drygo.XBossBar.Utils.LoadUtils;
+import dev.drygo.XBossBar.Utils.LogsUtils;
 
 public class XBossBar extends JavaPlugin {
     public static String prefix;

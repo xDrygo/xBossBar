@@ -1,12 +1,12 @@
-package org.eldrygo.XBossBar.Utils;
+package dev.drygo.XBossBar.Utils;
 
 import org.bukkit.Bukkit;
-import org.eldrygo.XBossBar.Hooks.XBossBarExpansion;
-import org.eldrygo.XBossBar.Handlers.XBossBarCommand;
-import org.eldrygo.XBossBar.Handlers.XBossBarTabCompleter;
-import org.eldrygo.XBossBar.Listeners.PlayerListener;
-import org.eldrygo.XBossBar.Managers.ConfigManager;
-import org.eldrygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Hooks.XBossBarExpansion;
+import dev.drygo.XBossBar.Handlers.XBossBarCommand;
+import dev.drygo.XBossBar.Handlers.XBossBarTabCompleter;
+import dev.drygo.XBossBar.Listeners.PlayerListener;
+import dev.drygo.XBossBar.Managers.ConfigManager;
+import dev.drygo.XBossBar.XBossBar;
 
 public class LoadUtils {
     private static XBossBar plugin;

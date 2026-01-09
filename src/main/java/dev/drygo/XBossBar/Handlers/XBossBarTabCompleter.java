@@ -1,4 +1,4 @@
-package org.eldrygo.XBossBar.Handlers;
+package dev.drygo.XBossBar.Handlers;
 
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.XBossBar.Managers.BossBarManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

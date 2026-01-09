@@ -1,4 +1,4 @@
-package org.eldrygo.XBossBar.Utils;
+package dev.drygo.XBossBar.Utils;
 
 import org.bukkit.Bukkit;
 

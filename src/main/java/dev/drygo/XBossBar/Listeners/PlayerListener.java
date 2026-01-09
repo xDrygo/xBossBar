@@ -1,14 +1,22 @@
 package dev.drygo.XBossBar.Listeners;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import dev.drygo.XBossBar.Managers.BossBarManager;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        BossBarManager.addAllBossBarsToPlayer(event.getPlayer());
+        Player player = event.getPlayer();
+        BossBarManager.restorePlayerBossBars(player);
+    }
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        BossBarManager.clearPlayerBossBarsVisual(player);
     }
 }

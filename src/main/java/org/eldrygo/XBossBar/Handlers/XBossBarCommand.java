@@ -14,30 +14,24 @@ import org.eldrygo.XBossBar.Utils.ChatUtils;
 import org.eldrygo.XBossBar.Utils.LoadUtils;
 import org.eldrygo.XBossBar.XBossBar;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 public class XBossBarCommand implements CommandExecutor {
-    private final ChatUtils chatUtils;
-    private final BossBarManager bossbarManager;
-    private final ConfigManager configManager;
     private final XBossBar plugin;
-    private final LoadUtils loadUtils;
 
-    public XBossBarCommand(ChatUtils chatUtils, BossBarManager bossbarManager, ConfigManager configManager, XBossBar plugin, LoadUtils loadUtils) {
-        this.chatUtils = chatUtils;
-        this.bossbarManager = bossbarManager;
-        this.configManager = configManager;
+    public XBossBarCommand(XBossBar plugin) {
         this.plugin = plugin;
-        this.loadUtils = loadUtils;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(@NonNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         if (args.length == 0) {
-            sender.sendMessage(chatUtils.getMessage("command.usage", null));
+            sender.sendMessage(ChatUtils.getMessage("commands.usage", null));
             return false;
         }
 
@@ -45,13 +39,13 @@ public class XBossBarCommand implements CommandExecutor {
 
         switch (sub) {
             case "create" -> {
-                if (!sender.hasPermission("xbossbar.command.create") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.create") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
 
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.create.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.create.usage", null));
                     return false;
                 }
 
@@ -82,16 +76,16 @@ public class XBossBarCommand implements CommandExecutor {
 
                 // Verificar que quede al menos un argumento para el título
                 if (current >= args.length) {
-                    sender.sendMessage(chatUtils.getMessage("command.create.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.create.usage", null));
                     return false;
                 }
 
                 String title = String.join(" ", java.util.Arrays.copyOfRange(args, current, args.length)).trim();
 
                 BossBarModel model = new BossBarModel(title, color, style, 1.0, personalized);
-                bossbarManager.createBossBar(name, model);
+                BossBarManager.createBossBar(name, model);
 
-                sender.sendMessage(chatUtils.getMessage("command.create.success", null)
+                sender.sendMessage(ChatUtils.getMessage("commands.create.success", null)
                         .replace("%name%", name)
                         .replace("%title%", ChatUtils.formatColor(title))
                         .replace("%personalized%", String.valueOf(personalized))
@@ -102,104 +96,104 @@ public class XBossBarCommand implements CommandExecutor {
             }
 
             case "settitle" -> {
-                if (!sender.hasPermission("xbossbar.command.settitle") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.settitle") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.settitle.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.settitle.usage", null));
                     return false;
                 }
                 String name = args[1];
 
-                BossBarModel model = bossbarManager.getBossBarModel(name);
+                BossBarModel model = BossBarManager.getBossBarModel(name);
                 if (model == null) {
-                    sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                    sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                     return false;
                 }
 
                 String title = String.join(" ", args).substring(args[0].length() + args[1].length() + 2);
-                bossbarManager.setTitle(name, title);
+                BossBarManager.setTitle(name, title);
 
-                sender.sendMessage(chatUtils.getMessage("command.settitle.success", null)
+                sender.sendMessage(ChatUtils.getMessage("commands.settitle.success", null)
                         .replace("%name%", name)
                         .replace("%title%", ChatUtils.formatColor(title))
                 );
                 return true;
             }
             case "setstyle" -> {
-                if (!sender.hasPermission("xbossbar.command.setstyle") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.setstyle") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
 
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.setstyle.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.setstyle.usage", null));
                     return false;
                 }
 
                 String name = args[1];
                 String styleArg = args[2].toUpperCase();
 
-                BossBarModel model = bossbarManager.getBossBarModel(name);
+                BossBarModel model = BossBarManager.getBossBarModel(name);
                 if (model == null) {
-                    sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                    sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                     return false;
                 }
 
                 try {
                     BarStyle newStyle = BarStyle.valueOf(styleArg);
                     model.setStyle(newStyle);
-                    sender.sendMessage(chatUtils.getMessage("command.setstyle.success", null)
+                    sender.sendMessage(ChatUtils.getMessage("commands.setstyle.success", null)
                             .replace("%name%", name)
                             .replace("%style%", styleArg.toLowerCase())
                     );
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(chatUtils.getMessage("command.setstyle.invalid_style", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.setstyle.invalid_style", null));
                 }
 
                 return true;
             }
             case "setcolor" -> {
-                if (!sender.hasPermission("xbossbar.command.setcolor") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.setcolor") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
 
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.setcolor.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.setcolor.usage", null));
                     return false;
                 }
 
                 String name = args[1];
                 String colorArg = args[2].toUpperCase();
 
-                BossBarModel model = bossbarManager.getBossBarModel(name);
+                BossBarModel model = BossBarManager.getBossBarModel(name);
                 if (model == null) {
-                    sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                    sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                     return false;
                 }
 
                 try {
                     BarColor newColor = BarColor.valueOf(colorArg);
                     model.setColor(newColor);
-                    sender.sendMessage(chatUtils.getMessage("command.setcolor.success", null)
+                    sender.sendMessage(ChatUtils.getMessage("commands.setcolor.success", null)
                             .replace("%name%", name)
                             .replace("%color%", colorArg.toLowerCase())
                     );
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(chatUtils.getMessage("command.setcolor.invalid_color", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.setcolor.invalid_color", null));
                 }
 
                 return true;
             }
             case "addplayer" -> {
-                if (!sender.hasPermission("xbossbar.command.addplayer") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.addplayer") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.addplayer.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.addplayer.usage", null));
                     return false;
                 }
 
@@ -207,41 +201,53 @@ public class XBossBarCommand implements CommandExecutor {
                 String playerName = args[2];
 
                 if (!barName.equals("*")) {
-                    BossBarModel model = bossbarManager.getBossBarModel(barName);
+                    BossBarModel model = BossBarManager.getBossBarModel(barName);
                     if (model == null) {
-                        sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                        sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                         return false;
                     }
                 }
 
-                Set<String> barTargets = barName.equals("*") ? bossbarManager.getBossBarNames() : Set.of(barName);
-                Collection<? extends Player> playerTargets = playerName.equals("*") ? Bukkit.getOnlinePlayers() : Set.of(Bukkit.getPlayerExact(playerName));
+                Set<String> barTargets = barName.equals("*") ? BossBarManager.getBossBarNames() : Set.of(barName);
+                Collection<? extends Player> playerTargets;
 
+                Player player =  Bukkit.getPlayer(playerName);
+
+                if (player == null) {
+                    if (!playerName.equals("*")) {
+                        sender.sendMessage(ChatUtils.getMessage("error.player_not_found", null)
+                                .replace("%target%", playerName));
+                        return false;
+                    }
+                    playerTargets = new ArrayList<>(Bukkit.getOnlinePlayers());
+                } else {
+                    playerTargets = playerName.equals("*") ? Bukkit.getOnlinePlayers() : Set.of(player);
+                }
                 for (String b : barTargets) {
                     for (Player p : playerTargets) {
                         if (p != null && p.isOnline()) {
-                            bossbarManager.addPlayerToBossBar(b, p);
+                            BossBarManager.addPlayerToBossBar(b, p);
                         }
                     }
                 }
 
                 if (playerName.equals("*")) {
-                    sender.sendMessage(chatUtils.getMessage("command.addplayer.success.all", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.addplayer.success.all", null));
                 } else {
-                    sender.sendMessage(chatUtils.getMessage("command.addplayer.success.one", null)
-                            .replace("%target%", Bukkit.getPlayerExact(playerName).getName())
+                    sender.sendMessage(ChatUtils.getMessage("commands.addplayer.success.one", null)
+                            .replace("%target%", playerName)
                     );
                 }
                 return true;
             }
 
             case "removeplayer" -> {
-                if (!sender.hasPermission("xbossbar.command.removeplayer") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.removeplayer") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
                 if (args.length < 3) {
-                    sender.sendMessage(chatUtils.getMessage("command.removeplayer.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.removeplayer.usage", null));
                     return false;
                 }
 
@@ -249,73 +255,85 @@ public class XBossBarCommand implements CommandExecutor {
                 String playerName = args[2];
 
                 if (!barName.equals("*")) {
-                    BossBarModel model = bossbarManager.getBossBarModel(barName);
+                    BossBarModel model = BossBarManager.getBossBarModel(barName);
                     if (model == null) {
-                        sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                        sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                         return false;
                     }
                 }
-                Set<String> barTargets = barName.equals("*") ? bossbarManager.getBossBarNames() : Set.of(barName);
-                Collection<? extends Player> playerTargets = playerName.equals("*") ? Bukkit.getOnlinePlayers() : Set.of(Bukkit.getPlayerExact(playerName));
+                Set<String> barTargets = barName.equals("*") ? BossBarManager.getBossBarNames() : Set.of(barName);
+                Collection<? extends Player> playerTargets;
 
+                Player player =  Bukkit.getPlayer(playerName);
+
+                if (player == null) {
+                    if (!playerName.equals("*")) {
+                        sender.sendMessage(ChatUtils.getMessage("error.player_not_found", null)
+                                .replace("%target%", playerName));
+                        return false;
+                    }
+                    playerTargets = new ArrayList<>(Bukkit.getOnlinePlayers());
+                } else {
+                    playerTargets = playerName.equals("*") ? Bukkit.getOnlinePlayers() : Set.of(player);
+                }
                 for (String b : barTargets) {
                     for (Player p : playerTargets) {
                         if (p != null && p.isOnline()) {
-                            bossbarManager.removePlayerFromBossBar(b, p);
+                            BossBarManager.removePlayerFromBossBar(b, p);
                         }
                     }
                 }
 
                 if (playerName.equals("*")) {
-                    sender.sendMessage(chatUtils.getMessage("command.removeplayer.success.all", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.removeplayer.success.all", null));
                 } else {
-                    sender.sendMessage(chatUtils.getMessage("command.removeplayer.success.one", null)
-                            .replace("%target%", Bukkit.getPlayerExact(playerName).getName())
+                    sender.sendMessage(ChatUtils.getMessage("commands.removeplayer.success.one", null)
+                            .replace("%target%", playerName)
                     );
                 }
                 return true;
             }
 
             case "remove" -> {
-                if (!sender.hasPermission("xbossbar.command.remove") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.remove") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
                 if (args.length < 2) {
-                    sender.sendMessage(chatUtils.getMessage("command.remove.usage", null));
+                    sender.sendMessage(ChatUtils.getMessage("commands.remove.usage", null));
                     return false;
                 }
 
                 String name = args[1];
                 if (name.equals("*")) {
-                    bossbarManager.clearAllBossBars();
-                    sender.sendMessage(chatUtils.getMessage("command.remove.success.all", null));
+                    BossBarManager.clearAllBossBars();
+                    sender.sendMessage(ChatUtils.getMessage("commands.remove.success.all", null));
                 } else {
-                    BossBarModel model = bossbarManager.getBossBarModel(name);
+                    BossBarModel model = BossBarManager.getBossBarModel(name);
                     if (model == null) {
-                        sender.sendMessage(chatUtils.getMessage("error.bossbar_not_found", null));
+                        sender.sendMessage(ChatUtils.getMessage("error.bossbar_not_found", null));
                         return false;
                     }
-                    bossbarManager.removeBossBar(name);
-                    sender.sendMessage(chatUtils.getMessage("command.remove.success.one", null)
+                    BossBarManager.removeBossBar(name);
+                    sender.sendMessage(ChatUtils.getMessage("commands.remove.success.one", null)
                             .replace("%name%", name)
                     );
                 }
                 return true;
             }
             case "info" -> {
-                if (!sender.hasPermission("xbossbar.command.info") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.info") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
                 infoXBossBar(sender);
             }
             case "help" -> {
-                if (!sender.hasPermission("xbossbar.command.help") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
-                    sender.sendMessage(chatUtils.getMessage("error.no_permission", null));
+                if (!sender.hasPermission("xbossbar.help") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
                     return true;
                 }
-                List<String> helpMessage = configManager.getMessageConfig().getStringList("command.help");
+                List<String> helpMessage = ConfigManager.getMessageConfig().getStringList("commands.help");
                 for (String line : helpMessage) {
                     sender.sendMessage(ChatUtils.formatColor(line));
                 }
@@ -324,15 +342,15 @@ public class XBossBarCommand implements CommandExecutor {
             case "reload" -> {
                 Player target = (sender instanceof Player) ? (Player) sender : null;
                 try {
-                    loadUtils.loadConfigFiles();
+                    LoadUtils.loadConfigFiles();
                 } catch (Exception e) {
-                    sender.sendMessage(chatUtils.getMessage("command.reload.error", target));
+                    sender.sendMessage(ChatUtils.getMessage("commands.reload.error", target));
                     return false;
                 }
-                sender.sendMessage(chatUtils.getMessage("command.reload.success", target));
+                sender.sendMessage(ChatUtils.getMessage("commands.reload.success", target));
             }
 
-            default -> sender.sendMessage(chatUtils.getMessage("command.usage", null));
+            default -> sender.sendMessage(ChatUtils.getMessage("commands.usage", null));
         }
 
         return false;
@@ -345,18 +363,16 @@ public class XBossBarCommand implements CommandExecutor {
         sender.sendMessage(ChatUtils.formatColor("&8                            #ff4b18&lx&r&lBossBar &8» &r&fInfo"));
         sender.sendMessage(ChatUtils.formatColor("&7"));
         sender.sendMessage(ChatUtils.formatColor("#fff18d&l                           ᴍᴀᴅᴇ ʙʏ"));
-        sender.sendMessage(ChatUtils.formatColor("&f                           xDrygo #707070» &7&o(@eldrygo)"));
+        sender.sendMessage(ChatUtils.formatColor("&f                   Drygo #707070» &7&o(@33drygo / drygo.dev)"));
         sender.sendMessage(ChatUtils.formatColor("&7"));
         sender.sendMessage(ChatUtils.formatColor("#fff18d&l                  ʀᴜɴɴɪɴɢ ᴘʟᴜɢɪɴ ᴠᴇʀꜱɪᴏɴ"));
-        sender.sendMessage(ChatUtils.formatColor("&f                                    " + plugin.version));
+        sender.sendMessage(ChatUtils.formatColor("&f                                    " + XBossBar.version));
         sender.sendMessage(ChatUtils.formatColor("&7"));
         sender.sendMessage(ChatUtils.formatColor("#fff18d&l                      ꜰᴇᴀᴛᴜʀᴇꜱ ᴇɴᴀʙʟᴇᴅ"));
         sender.sendMessage(ChatUtils.formatColor("&f                           ᴘʟᴀᴄᴇʜᴏʟᴅᴇʀᴀᴘɪ #707070» #FFFAAB" + placeholderStatus));
         sender.sendMessage(ChatUtils.formatColor("&7"));
         sender.sendMessage(ChatUtils.formatColor("#fff18d&l               ᴅʀʏɢᴏ'ꜱ ɴᴏᴛᴇ ᴏꜰ ᴛʜᴇ ᴠᴇʀꜱɪᴏɴ"));
-        sender.sendMessage(ChatUtils.formatColor("&f  #FFFAAB       Welcome to xBossBar! This plugin was a function I"));
-        sender.sendMessage(ChatUtils.formatColor("&f  #FFFAAB         made for a project, so I decided to make it an"));
-        sender.sendMessage(ChatUtils.formatColor("&f  #FFFAAB      independent plugin with an API. A WIKI is coming soon!"));
+        sender.sendMessage(ChatUtils.formatColor("&f  #FFFAAB       I refactored a the BossBar and make all static Bv"));
         sender.sendMessage(ChatUtils.formatColor("&7"));
         sender.sendMessage(ChatUtils.formatColor("&7"));
     }

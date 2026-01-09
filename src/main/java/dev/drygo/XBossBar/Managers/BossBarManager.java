@@ -7,15 +7,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import dev.drygo.XBossBar.Models.BossBarModel;
 import dev.drygo.XBossBar.XBossBar;
+import dev.drygo.XBossBar.Utils.DebugUtils;
 
 import java.util.*;
 
 public class BossBarManager {
 
     private static XBossBar plugin;
-    private static Map<String, BossBar> globalBars = new LinkedHashMap<>();
-    private static Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
-    private static Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
+    private static final Map<String, BossBar> globalBars = new LinkedHashMap<>();
+    private static final Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
+    private static final Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
+
+    private static final Map<UUID, LinkedHashSet<String>> playerBossBars = new HashMap<>();
+
     private static BukkitRunnable bossBarUpdateTask;
 
     public static void init(XBossBar plugin) {
@@ -31,7 +35,6 @@ public class BossBarManager {
                     BossBarModel model = entry.getValue();
 
                     if (model.isPersonalized()) {
-                        // Obtener las barras personalizadas para este nombre
                         Map<UUID, BossBar> playerBars = personalizedBars.get(name);
                         if (playerBars == null || playerBars.isEmpty()) continue;
 
@@ -39,7 +42,6 @@ public class BossBarManager {
                             Player player = plugin.getServer().getPlayer(pEntry.getKey());
                             BossBar bar = pEntry.getValue();
                             if (player != null && player.isOnline()) {
-                                // Actualiza el título y progreso solo si el jugador está en línea
                                 bar.setTitle(model.resolveTitleFor(player));
                                 bar.setProgress(model.getProgress());
                                 bar.setStyle(model.getStyle());
@@ -47,10 +49,9 @@ public class BossBarManager {
                             }
                         }
                     } else {
-                        // Barra global, no personalizada
                         BossBar bar = globalBars.get(name);
                         if (bar != null) {
-                            model.updateTitle(); // Solo actualiza si no es personalizado
+                            model.updateTitle();
                             bar.setTitle(model.getTitle());
                             bar.setProgress(model.getProgress());
                             bar.setStyle(model.getStyle());
@@ -60,7 +61,6 @@ public class BossBarManager {
                 }
             }
         };
-        // Ejecuta la tarea periódicamente cada 20 ticks (1 segundo)
         bossBarUpdateTask.runTaskTimer(plugin, 0L, 1L);
     }
 
@@ -92,21 +92,17 @@ public class BossBarManager {
             } else {
                 BossBar bar = globalBars.get(name);
                 if (bar != null) {
-                    // Guardar jugadores que la tenían
                     List<Player> players = new ArrayList<>(bar.getPlayers());
 
-                    // Quitar barra a esos jugadores
                     for (Player player : players) {
                         bar.removePlayer(player);
                     }
 
-                    // Actualizar propiedades de la barra
                     bar.setTitle(model.getTitle());
                     bar.setProgress(model.getProgress());
                     bar.setColor(model.getColor());
                     bar.setStyle(model.getStyle());
 
-                    // Volver a agregar la barra a los mismos jugadores
                     for (Player player : players) {
                         bar.addPlayer(player);
                     }
@@ -129,7 +125,6 @@ public class BossBarManager {
             bar.setProgress(model.getProgress());
             globalBars.put(name, bar);
         } else {
-            // CAMBIO: LinkedHashMap para mantener orden de inserción por jugador
             personalizedBars.put(name, new LinkedHashMap<>());
         }
         updateBossBarForAllPlayers(name);
@@ -137,15 +132,21 @@ public class BossBarManager {
 
     public static void addPlayerToBossBar(String name, Player player) {
         BossBarModel model = bossBarModels.get(name);
-        if (model == null) return;
+        if (model == null) {
+            DebugUtils.debug("Attempting to add player " + player.getName() + " to bossbar '" + name + "' that does not exist");
+            return;
+        }
+
+        playerBossBars.computeIfAbsent(player.getUniqueId(), k -> new LinkedHashSet<>()).add(name);
+        DebugUtils.debug("Registered: " + player.getName() + " now has bossbar '" + name + "'");
 
         if (model.isPersonalized()) {
             Map<UUID, BossBar> playerBars = personalizedBars.get(name);
             if (playerBars == null) return;
 
-            // Verifica si el jugador ya tiene la BossBar personalizada
             if (playerBars.containsKey(player.getUniqueId())) {
-                return; // Ya tiene la BossBar, no agregamos otra
+                DebugUtils.debug("Player " + player.getName() + " already has personalized bossbar '" + name + "'");
+                return;
             }
 
             BossBar bar = plugin.getServer().createBossBar(
@@ -156,12 +157,13 @@ public class BossBarManager {
             bar.setProgress(model.getProgress());
             bar.addPlayer(player);
             playerBars.put(player.getUniqueId(), bar);
+            DebugUtils.debug("Created personalized bossbar '" + name + "' for " + player.getName());
         } else {
             BossBar bar = globalBars.get(name);
             if (bar != null) {
-                // Verifica si el jugador ya está en la BossBar global
                 if (!bar.getPlayers().contains(player)) {
                     bar.addPlayer(player);
+                    DebugUtils.debug("Added " + player.getName() + " to global bossbar '" + name + "'");
                 }
             }
         }
@@ -171,10 +173,18 @@ public class BossBarManager {
         BossBarModel model = bossBarModels.get(name);
         if (model == null) return;
 
+        LinkedHashSet<String> playerBars = playerBossBars.get(player.getUniqueId());
+        if (playerBars != null) {
+            playerBars.remove(name);
+            if (playerBars.isEmpty()) {
+                playerBossBars.remove(player.getUniqueId());
+            }
+        }
+
         if (model.isPersonalized()) {
-            Map<UUID, BossBar> playerBars = personalizedBars.get(name);
-            if (playerBars == null) return;
-            BossBar bar = playerBars.remove(player.getUniqueId());
+            Map<UUID, BossBar> bars = personalizedBars.get(name);
+            if (bars == null) return;
+            BossBar bar = bars.remove(player.getUniqueId());
             if (bar != null) {
                 bar.removeAll();
             }
@@ -186,22 +196,131 @@ public class BossBarManager {
         }
     }
 
-    // Método para agregar todas las bossbars a un jugador en el orden correcto
+    public static void restorePlayerBossBars(Player player) {
+        LinkedHashSet<String> savedBossBars = playerBossBars.get(player.getUniqueId());
+
+        DebugUtils.debug("Restoring bossbars for " + player.getName() + " (UUID: " + player.getUniqueId() + ")");
+
+        if (savedBossBars == null || savedBossBars.isEmpty()) {
+            DebugUtils.debug("No saved bossbars for " + player.getName());
+            DebugUtils.debug("Total players with saved bossbars: " + playerBossBars.size());
+            return;
+        }
+
+        DebugUtils.debug("Saved bossbars for " + player.getName() + ": " + savedBossBars);
+        DebugUtils.debug("Available BossBarModels: " + bossBarModels.keySet());
+
+        for (String name : savedBossBars) {
+            DebugUtils.debug("Attempting to restore bossbar '" + name + "' for " + player.getName());
+
+            BossBarModel model = bossBarModels.get(name);
+            if (model == null) {
+                DebugUtils.debug("ERROR: Bossbar '" + name + "' no longer exists in bossBarModels");
+                continue;
+            }
+
+            DebugUtils.debug("Model found for '" + name + "'. Is personalized: " + model.isPersonalized());
+
+            if (model.isPersonalized()) {
+                Map<UUID, BossBar> playerBars = personalizedBars.get(name);
+                if (playerBars == null) {
+                    DebugUtils.debug("ERROR: Personalized bar map does not exist for '" + name + "'");
+                    DebugUtils.debug("Available personalized maps: " + personalizedBars.keySet());
+                    continue;
+                }
+
+                BossBar bar = plugin.getServer().createBossBar(
+                        model.resolveTitleFor(player),
+                        model.getColor(),
+                        model.getStyle()
+                );
+                bar.setProgress(model.getProgress());
+                bar.addPlayer(player);
+                playerBars.put(player.getUniqueId(), bar);
+                DebugUtils.debug("✓ Restored personalized bossbar '" + name + "' for " + player.getName());
+            } else {
+                BossBar bar = globalBars.get(name);
+                DebugUtils.debug("Global bossbar '" + name + "': " + (bar != null ? "exists" : "DOES NOT EXIST"));
+                DebugUtils.debug("Available global bars: " + globalBars.keySet());
+
+                if (bar != null) {
+                    if (!bar.getPlayers().contains(player)) {
+                        bar.addPlayer(player);
+                        DebugUtils.debug("✓ Restored global bossbar '" + name + "' for " + player.getName());
+                    } else {
+                        DebugUtils.debug("Player was already in global bossbar '" + name + "'");
+                    }
+                } else {
+                    DebugUtils.debug("ERROR: Global bossbar '" + name + "' does not exist in globalBars");
+                }
+            }
+        }
+    }
+
+    public static void clearPlayerBossBarsVisual(Player player) {
+        LinkedHashSet<String> savedBossBars = playerBossBars.get(player.getUniqueId());
+        if (savedBossBars == null || savedBossBars.isEmpty()) {
+            return;
+        }
+
+        DebugUtils.debug("Clearing visual bossbars for " + player.getName());
+
+        for (String name : savedBossBars) {
+            BossBarModel model = bossBarModels.get(name);
+            if (model == null) continue;
+
+            if (model.isPersonalized()) {
+                Map<UUID, BossBar> bars = personalizedBars.get(name);
+                if (bars != null) {
+                    BossBar bar = bars.remove(player.getUniqueId());
+                    if (bar != null) {
+                        bar.removeAll();
+                        DebugUtils.debug("Removed personalized bossbar '" + name + "' from " + player.getName());
+                    }
+                }
+            } else {
+                BossBar bar = globalBars.get(name);
+                if (bar != null) {
+                    bar.removePlayer(player);
+                    DebugUtils.debug("Removed " + player.getName() + " from global bossbar '" + name + "'");
+                }
+            }
+        }
+
+        DebugUtils.debug("Bossbars saved for next connection: " + savedBossBars);
+    }
+
     public static void addAllBossBarsToPlayer(Player player) {
-        // Remueve primero cualquier bossbar existente para evitar duplicados
         removeAllBossBarsFromPlayer(player);
 
-        // Agrega las bossbars en el orden de inserción (LinkedHashMap mantiene el orden)
         for (String name : bossBarModels.keySet()) {
             addPlayerToBossBar(name, player);
         }
     }
 
-    // Método para remover todas las bossbars de un jugador
     public static void removeAllBossBarsFromPlayer(Player player) {
         for (String name : bossBarModels.keySet()) {
             removePlayerFromBossBar(name, player);
         }
+    }
+
+    public static Set<String> getPlayerBossBars(UUID playerId) {
+        LinkedHashSet<String> bars = playerBossBars.get(playerId);
+        return bars != null ? new LinkedHashSet<>(bars) : new LinkedHashSet<>();
+    }
+
+    public static boolean hasPlayerBossBar(Player player, String bossBarName) {
+        LinkedHashSet<String> bars = playerBossBars.get(player.getUniqueId());
+        return bars != null && bars.contains(bossBarName);
+    }
+
+    public static boolean hasPlayerBossBar(UUID playerId, String bossBarName) {
+        LinkedHashSet<String> bars = playerBossBars.get(playerId);
+        return bars != null && bars.contains(bossBarName);
+    }
+
+    public static Set<String> getPlayerBossBars(Player player) {
+        return getPlayerBossBars(player.getUniqueId());
     }
 
     public static void setTitle(String name, String title) {
@@ -240,6 +359,10 @@ public class BossBarManager {
         BossBarModel model = bossBarModels.remove(name);
         if (model == null) return;
 
+        for (LinkedHashSet<String> playerBars : playerBossBars.values()) {
+            playerBars.remove(name);
+        }
+
         if (model.isPersonalized()) {
             Map<UUID, BossBar> bars = personalizedBars.remove(name);
             if (bars != null) {
@@ -256,10 +379,10 @@ public class BossBarManager {
     }
 
     public static void clearAllBossBars() {
-        // CAMBIO: LinkedHashSet para mantener el orden durante la iteración
         for (String name : new LinkedHashSet<>(bossBarModels.keySet())) {
             removeBossBar(name);
         }
+        playerBossBars.clear();
     }
 
     public static BossBar getBossBar(String name) {
@@ -271,7 +394,6 @@ public class BossBarManager {
     }
 
     public static Set<String> getBossBarNames() {
-        // El keySet() de LinkedHashMap ya mantiene el orden de inserción
         return bossBarModels.keySet();
     }
 }

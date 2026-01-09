@@ -8,16 +8,14 @@ import org.eldrygo.XBossBar.XBossBar;
 import java.io.File;
 
 public class ConfigManager {
-    public FileConfiguration messagesConfig;
-    private final XBossBar plugin;
+    private static XBossBar plugin;
+    private static FileConfiguration messagesConfig;
 
-    public ConfigManager(XBossBar plugin) {
-        this.plugin = plugin;
+    public static void init(XBossBar plugin) {
+        ConfigManager.plugin = plugin;
     }
 
-    public String getPrefix() { return plugin.prefix; }
-    public FileConfiguration getMessageConfig() { return messagesConfig; }
-    public void loadConfig() {
+    public static void loadConfig() {
         try {
             plugin.saveDefaultConfig();
             plugin.reloadConfig();
@@ -27,8 +25,7 @@ public class ConfigManager {
             e.printStackTrace();
         }
     }
-
-    public void reloadMessages() {
+    public static void reloadMessages() {
         try {
             File messagesFile = new File(plugin.getDataFolder(), "messages.yml");
             if (!messagesFile.exists()) {
@@ -39,14 +36,16 @@ public class ConfigManager {
             }
 
             messagesConfig = YamlConfiguration.loadConfiguration(messagesFile);
-            plugin.prefix = ChatUtils.formatColor("#ff4b18&lx&r&f&lBossBar &cDefault Prefix &8»&r");
+            XBossBar.prefix = ChatUtils.formatColor("#ff5b84&lVR&r&lKoth &cDefault Prefix &8»&r");
         } catch (Exception e) {
             plugin.getLogger().severe("❌ Failed to load messages configuration due to an unexpected error: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    public void setPrefix(String prefix) {
-        plugin.prefix = prefix;
+    public static String getPrefix() { return XBossBar.prefix; }
+    public static void setPrefix(String prefix) { XBossBar.prefix = prefix; }
+    public static FileConfiguration getMessageConfig() {
+        return messagesConfig;
     }
 }

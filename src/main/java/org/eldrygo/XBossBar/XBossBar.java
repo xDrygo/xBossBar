@@ -9,31 +9,27 @@ import org.eldrygo.XBossBar.Utils.LoadUtils;
 import org.eldrygo.XBossBar.Utils.LogsUtils;
 
 public class XBossBar extends JavaPlugin {
-    public String prefix;
-    public String version;
-    public boolean enabledPAPI = false;
-    private BossBarManager bossbarManager;
-    private LogsUtils logsUtils;
+    public static String prefix;
+    public static String version;
+    public static boolean enabledPAPI = false;
 
     @Override
     public void onEnable() {
-        this.version = getDescription().getVersion();
-        this.bossbarManager = new BossBarManager(this);
-        this.logsUtils = new LogsUtils(this);
-        ConfigManager configManager = new ConfigManager(this);
-        ChatUtils chatUtils = new ChatUtils(configManager, this);
-        LoadUtils loadUtils = new LoadUtils(this, bossbarManager, configManager, chatUtils);
-
-        XBossBarAPI.setManager(bossbarManager);
-        bossbarManager.startBossBarUpdateTask();
-        loadUtils.loadFeatures();
-        logsUtils.sendStartupMessage();
+        version = getDescription().getVersion();
+        BossBarManager.init(this);
+        ConfigManager.init(this);
+        ChatUtils.init(this);
+        BossBarManager.startBossBarUpdateTask();
+        LoadUtils.init(this);
+        LoadUtils.loadFeatures();
+        LogsUtils.init(this);
+        LogsUtils.sendStartupMessage();
     }
 
     @Override
     public void onDisable() {
-        bossbarManager.stopBossBarUpdateTask();
-        logsUtils.sendShutdownMessage();
+        BossBarManager.stopBossBarUpdateTask();
+        LogsUtils.sendShutdownMessage();
     }
 
     public boolean enabledPAPI() {

@@ -15,11 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class XBossBarTabCompleter implements TabCompleter {
-    private final BossBarManager bossbarManager;
-
-    public XBossBarTabCompleter(BossBarManager bossbarManager) {
-        this.bossbarManager = bossbarManager;
-    }
 
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
@@ -50,7 +45,7 @@ public class XBossBarTabCompleter implements TabCompleter {
                 }
                 case "settitle", "setstyle", "setcolor", "addplayer", "removeplayer", "remove" -> {
                     if (args.length == 2) {
-                        completions.addAll(bossbarManager.getBossBarNames());
+                        completions.addAll(BossBarManager.getBossBarNames());
                         if (sub.equals("remove") || sub.endsWith("player")) {
                             completions.add("*");
                         }

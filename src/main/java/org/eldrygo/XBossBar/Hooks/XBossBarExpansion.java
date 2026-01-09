@@ -10,11 +10,9 @@ import org.eldrygo.XBossBar.XBossBar;
 public class XBossBarExpansion extends PlaceholderExpansion {
 
     private final XBossBar plugin;
-    private final BossBarManager bossBarManager;
 
-    public XBossBarExpansion(XBossBar plugin, BossBarManager bossBarManager) {
+    public XBossBarExpansion(XBossBar plugin) {
         this.plugin = plugin;
-        this.bossBarManager = bossBarManager;
     }
 
     @Override
@@ -47,7 +45,7 @@ public class XBossBarExpansion extends PlaceholderExpansion {
         String type = parts[0];
         String barName = parts[1];
 
-        BossBarModel model = bossBarManager.getBossBarModel(barName);
+        BossBarModel model = BossBarManager.getBossBarModel(barName);
         if (model == null) return null;
 
         switch (type.toLowerCase()) {

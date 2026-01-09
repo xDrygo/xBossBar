@@ -5,53 +5,46 @@ import org.eldrygo.XBossBar.Hooks.XBossBarExpansion;
 import org.eldrygo.XBossBar.Handlers.XBossBarCommand;
 import org.eldrygo.XBossBar.Handlers.XBossBarTabCompleter;
 import org.eldrygo.XBossBar.Listeners.PlayerListener;
-import org.eldrygo.XBossBar.Managers.BossBarManager;
 import org.eldrygo.XBossBar.Managers.ConfigManager;
 import org.eldrygo.XBossBar.XBossBar;
 
 public class LoadUtils {
-    private final XBossBar plugin;
-    private final BossBarManager bossbarManager;
-    private final ConfigManager configManager;
-    private final ChatUtils chatUtils;
+    private static XBossBar plugin;
 
-    public LoadUtils(XBossBar plugin, BossBarManager bossbarManager, ConfigManager configManager, ChatUtils chatUtils) {
-        this.plugin = plugin;
-        this.bossbarManager = bossbarManager;
-        this.configManager = configManager;
-        this.chatUtils = chatUtils;
+    public static void init(XBossBar plugin) {
+        LoadUtils.plugin = plugin;
     }
 
-    public void loadFeatures() {
+    public static void loadFeatures() {
         loadConfigFiles();
         loadCommand();
         loadListeners();
         loadPlaceholderAPI();
     }
 
-    public void loadConfigFiles() {
-        configManager.loadConfig();
-        configManager.reloadMessages();
-        configManager.setPrefix(ChatUtils.formatColor(configManager.getMessageConfig().getString("prefix", "  &8»&r")));
+    public static void loadConfigFiles() {
+        ConfigManager.loadConfig();
+        ConfigManager.reloadMessages();
+        ConfigManager.setPrefix(ChatUtils.formatColor(ConfigManager.getMessageConfig().getString("prefix", "  &8»&r")));
     }
-    private void loadListeners() {
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(bossbarManager), plugin);
+    private static void loadListeners() {
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), plugin);
     }
-    private void loadCommand() {
+    private static void loadCommand() {
         if (plugin.getCommand("xbossbar") == null) {
             plugin.getLogger().severe("❌ Error: /xbossbar command is not registered in plugin.yml");
         } else {
-            plugin.getCommand("xbossbar").setExecutor(new XBossBarCommand(chatUtils, bossbarManager, configManager, plugin, this));
-            plugin.getCommand("xbossbar").setTabCompleter(new XBossBarTabCompleter(bossbarManager));
+            plugin.getCommand("xbossbar").setExecutor(new XBossBarCommand(plugin));
+            plugin.getCommand("xbossbar").setTabCompleter(new XBossBarTabCompleter());
             plugin.getLogger().info("✅ /xbossbar command was successfully loaded.");
         }
     }
 
-    private void loadPlaceholderAPI() {
+    private static void loadPlaceholderAPI() {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new XBossBarExpansion(plugin, bossbarManager).register();
+            new XBossBarExpansion(plugin).register();
             plugin.getLogger().info("✅ PlaceholderAPI detected. PAPI dependency successfully loaded.");
-            plugin.enabledPAPI = true;
+            XBossBar.enabledPAPI = true;
         } else {
             plugin.getLogger().warning("⚠  PlaceholderAPI not detected. PAPI placeholders will not work.");
         }

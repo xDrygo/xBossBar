@@ -10,12 +10,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ChatUtils {
-    private final ConfigManager configManager;
-    private final XBossBar plugin;
+    private static XBossBar plugin;
 
-    public ChatUtils(ConfigManager configManager, XBossBar plugin) {
-        this.configManager = configManager;
-        this.plugin = plugin;
+    public static void init(XBossBar plugin) {
+        ChatUtils.plugin = plugin;
     }
 
     public static String formatColor(String message) {
@@ -39,18 +37,14 @@ public class ChatUtils {
         matcher.appendTail(buffer);
         return buffer.toString();
     }
-    public String getMessage(String path, Player player) {
-        if (configManager == null) {
-            throw new IllegalStateException("ConfigManager not initialized.");
-        }
-
-        String message = configManager.getMessageConfig().isList(path)
-                ? String.join("\n", configManager.getMessageConfig().getStringList(path))
-                : configManager.getMessageConfig().getString(path);
+    public static String getMessage(String path, Player player) {
+        String message = ConfigManager.getMessageConfig().isList(path)
+                ? String.join("\n", ConfigManager.getMessageConfig().getStringList(path))
+                : ConfigManager.getMessageConfig().getString(path);
 
         if (message == null || message.isEmpty()) {
             plugin.getLogger().warning("[WARNING] Message not found: " + path);
-            return ChatUtils.formatColor("&r" + configManager.getPrefix() + " #FF0000&l[ERROR] #FF3535Message not found: " + path);
+            return ChatUtils.formatColor("&r" + ConfigManager.getPrefix() + " #FF0000&l[ERROR] #FF3535Message not found: " + path);
         }
 
         // Reemplazar placeholders
@@ -64,7 +58,7 @@ public class ChatUtils {
             message = PlaceholderAPI.setPlaceholders(player, message);
         }
 
-        message = message.replace("%prefix%", configManager.getPrefix());
+        message = message.replace("%prefix%", ConfigManager.getPrefix());
 
         return ChatUtils.formatColor(message);
     }

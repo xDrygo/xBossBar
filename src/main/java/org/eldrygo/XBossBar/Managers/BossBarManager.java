@@ -12,18 +12,17 @@ import java.util.*;
 
 public class BossBarManager {
 
-    private final XBossBar plugin;
-    // CAMBIO: HashMap -> LinkedHashMap para mantener orden de inserción
-    private final Map<String, BossBar> globalBars = new LinkedHashMap<>();
-    private final Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
-    private final Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
-    private BukkitRunnable bossBarUpdateTask;
+    private static XBossBar plugin;
+    private static Map<String, BossBar> globalBars = new LinkedHashMap<>();
+    private static Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
+    private static Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
+    private static BukkitRunnable bossBarUpdateTask;
 
-    public BossBarManager(XBossBar plugin) {
-        this.plugin = plugin;
+    public static void init(XBossBar plugin) {
+        BossBarManager.plugin = plugin;
     }
 
-    public void startBossBarUpdateTask() {
+    public static void startBossBarUpdateTask() {
         bossBarUpdateTask = new BukkitRunnable() {
             @Override
             public void run() {
@@ -65,14 +64,14 @@ public class BossBarManager {
         bossBarUpdateTask.runTaskTimer(plugin, 0L, 1L);
     }
 
-    public void stopBossBarUpdateTask() {
+    public static void stopBossBarUpdateTask() {
         if (bossBarUpdateTask != null) {
             bossBarUpdateTask.cancel();
             bossBarUpdateTask = null;
         }
     }
 
-    private void updateBossBarForAllPlayers(String name) {
+    private static void updateBossBarForAllPlayers(String name) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
             if (model.isPersonalized()) {
@@ -116,7 +115,7 @@ public class BossBarManager {
         }
     }
 
-    public void createBossBar(String name, BossBarModel model) {
+    public static void createBossBar(String name, BossBarModel model) {
         if (bossBarModels.containsKey(name)) return;
 
         bossBarModels.put(name, model);
@@ -136,7 +135,7 @@ public class BossBarManager {
         updateBossBarForAllPlayers(name);
     }
 
-    public void addPlayerToBossBar(String name, Player player) {
+    public static void addPlayerToBossBar(String name, Player player) {
         BossBarModel model = bossBarModels.get(name);
         if (model == null) return;
 
@@ -168,7 +167,7 @@ public class BossBarManager {
         }
     }
 
-    public void removePlayerFromBossBar(String name, Player player) {
+    public static void removePlayerFromBossBar(String name, Player player) {
         BossBarModel model = bossBarModels.get(name);
         if (model == null) return;
 
@@ -188,7 +187,7 @@ public class BossBarManager {
     }
 
     // Método para agregar todas las bossbars a un jugador en el orden correcto
-    public void addAllBossBarsToPlayer(Player player) {
+    public static void addAllBossBarsToPlayer(Player player) {
         // Remueve primero cualquier bossbar existente para evitar duplicados
         removeAllBossBarsFromPlayer(player);
 
@@ -199,13 +198,13 @@ public class BossBarManager {
     }
 
     // Método para remover todas las bossbars de un jugador
-    public void removeAllBossBarsFromPlayer(Player player) {
+    public static void removeAllBossBarsFromPlayer(Player player) {
         for (String name : bossBarModels.keySet()) {
             removePlayerFromBossBar(name, player);
         }
     }
 
-    public void setTitle(String name, String title) {
+    public static void setTitle(String name, String title) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
             model.setTitle(title);
@@ -213,7 +212,7 @@ public class BossBarManager {
         }
     }
 
-    public void setProgress(String name, double progress) {
+    public static void setProgress(String name, double progress) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
             model.setProgress(progress);
@@ -221,7 +220,7 @@ public class BossBarManager {
         }
     }
 
-    public void setStyle(String name, BarStyle style) {
+    public static void setStyle(String name, BarStyle style) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
             model.setStyle(style);
@@ -229,7 +228,7 @@ public class BossBarManager {
         }
     }
 
-    public void setColor(String name, BarColor color) {
+    public static void setColor(String name, BarColor color) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
             model.setColor(color);
@@ -237,7 +236,7 @@ public class BossBarManager {
         }
     }
 
-    public void removeBossBar(String name) {
+    public static void removeBossBar(String name) {
         BossBarModel model = bossBarModels.remove(name);
         if (model == null) return;
 
@@ -256,22 +255,22 @@ public class BossBarManager {
         }
     }
 
-    public void clearAllBossBars() {
+    public static void clearAllBossBars() {
         // CAMBIO: LinkedHashSet para mantener el orden durante la iteración
         for (String name : new LinkedHashSet<>(bossBarModels.keySet())) {
             removeBossBar(name);
         }
     }
 
-    public BossBar getBossBar(String name) {
+    public static BossBar getBossBar(String name) {
         return globalBars.get(name);
     }
 
-    public BossBarModel getBossBarModel(String name) {
+    public static BossBarModel getBossBarModel(String name) {
         return bossBarModels.get(name);
     }
 
-    public Set<String> getBossBarNames() {
+    public static Set<String> getBossBarNames() {
         // El keySet() de LinkedHashMap ya mantiene el orden de inserción
         return bossBarModels.keySet();
     }

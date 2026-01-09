@@ -25,6 +25,7 @@ public class XBossBar extends JavaPlugin {
         LoadUtils.loadFeatures();
         LogsUtils.init(this);
         LogsUtils.sendStartupMessage();
+        LogsUtils.sendUpdateMessage();
     }
 
     @Override

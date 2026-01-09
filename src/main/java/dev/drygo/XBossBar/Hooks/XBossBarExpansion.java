@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import dev.drygo.XBossBar.Managers.BossBarManager;
 import dev.drygo.XBossBar.Models.BossBarModel;
 import dev.drygo.XBossBar.XBossBar;
+import org.jspecify.annotations.NonNull;
 
 public class XBossBarExpansion extends PlaceholderExpansion {
 
@@ -36,8 +37,8 @@ public class XBossBarExpansion extends PlaceholderExpansion {
     }
 
     @Override
-    public String onRequest(OfflinePlayer offlinePlayer, String params) {
-        if (params == null || params.isEmpty()) return null;
+    public String onRequest(OfflinePlayer offlinePlayer, @NonNull String params) {
+        if (params.isEmpty()) return null;
 
         String[] parts = params.split("_", 2);
         if (parts.length != 2) return null;

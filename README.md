@@ -16,7 +16,7 @@
 
 ### Useful Links 🔗
 
-* [Modrinth Page](https://modrinth.com/plugin/MiniBook) – Download the latest releases, check supported Minecraft versions, and stay up to date with MiniBook updates.
+* [Modrinth Page](https://modrinth.com/plugin/xBossBar) – Download the latest releases, check supported Minecraft versions, and stay up to date with MiniBook updates.
 - [Wiki Documentation](https://wiki.drygo.dev/xbossbar) – Guides for commands, configuration, placeholders, and API usage.
 
 ### Support ❓

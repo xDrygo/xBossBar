@@ -17,9 +17,6 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Set<String> bossBars = bossBarManager.getBossBarNames();
-        for (String b : bossBars) {
-            bossBarManager.addPlayerToBossBar(b, event.getPlayer());
-        }
+        bossBarManager.addAllBossBarsToPlayer(event.getPlayer());
     }
 }

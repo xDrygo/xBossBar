@@ -13,9 +13,10 @@ import java.util.*;
 public class BossBarManager {
 
     private final XBossBar plugin;
-    private final Map<String, BossBar> globalBars = new HashMap<>();
-    private final Map<String, Map<UUID, BossBar>> personalizedBars = new HashMap<>();
-    private final Map<String, BossBarModel> bossBarModels = new HashMap<>();
+    // CAMBIO: HashMap -> LinkedHashMap para mantener orden de inserción
+    private final Map<String, BossBar> globalBars = new LinkedHashMap<>();
+    private final Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
+    private final Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
     private BukkitRunnable bossBarUpdateTask;
 
     public BossBarManager(XBossBar plugin) {
@@ -33,7 +34,7 @@ public class BossBarManager {
                     if (model.isPersonalized()) {
                         // Obtener las barras personalizadas para este nombre
                         Map<UUID, BossBar> playerBars = personalizedBars.get(name);
-                        if (playerBars == null || playerBars.isEmpty()) continue; // Si no existen barras personalizadas, pasar al siguiente
+                        if (playerBars == null || playerBars.isEmpty()) continue;
 
                         for (Map.Entry<UUID, BossBar> pEntry : playerBars.entrySet()) {
                             Player player = plugin.getServer().getPlayer(pEntry.getKey());
@@ -61,7 +62,7 @@ public class BossBarManager {
             }
         };
         // Ejecuta la tarea periódicamente cada 20 ticks (1 segundo)
-        bossBarUpdateTask.runTaskTimer(plugin, 0L, 20L);
+        bossBarUpdateTask.runTaskTimer(plugin, 0L, 1L);
     }
 
     public void stopBossBarUpdateTask() {
@@ -70,6 +71,7 @@ public class BossBarManager {
             bossBarUpdateTask = null;
         }
     }
+
     private void updateBossBarForAllPlayers(String name) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
@@ -128,7 +130,8 @@ public class BossBarManager {
             bar.setProgress(model.getProgress());
             globalBars.put(name, bar);
         } else {
-            personalizedBars.put(name, new HashMap<>());
+            // CAMBIO: LinkedHashMap para mantener orden de inserción por jugador
+            personalizedBars.put(name, new LinkedHashMap<>());
         }
         updateBossBarForAllPlayers(name);
     }
@@ -184,6 +187,24 @@ public class BossBarManager {
         }
     }
 
+    // Método para agregar todas las bossbars a un jugador en el orden correcto
+    public void addAllBossBarsToPlayer(Player player) {
+        // Remueve primero cualquier bossbar existente para evitar duplicados
+        removeAllBossBarsFromPlayer(player);
+
+        // Agrega las bossbars en el orden de inserción (LinkedHashMap mantiene el orden)
+        for (String name : bossBarModels.keySet()) {
+            addPlayerToBossBar(name, player);
+        }
+    }
+
+    // Método para remover todas las bossbars de un jugador
+    public void removeAllBossBarsFromPlayer(Player player) {
+        for (String name : bossBarModels.keySet()) {
+            removePlayerFromBossBar(name, player);
+        }
+    }
+
     public void setTitle(String name, String title) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
@@ -207,6 +228,7 @@ public class BossBarManager {
             updateBossBarForAllPlayers(name);
         }
     }
+
     public void setColor(String name, BarColor color) {
         BossBarModel model = bossBarModels.get(name);
         if (model != null) {
@@ -235,7 +257,8 @@ public class BossBarManager {
     }
 
     public void clearAllBossBars() {
-        for (String name : new HashSet<>(bossBarModels.keySet())) {
+        // CAMBIO: LinkedHashSet para mantener el orden durante la iteración
+        for (String name : new LinkedHashSet<>(bossBarModels.keySet())) {
             removeBossBar(name);
         }
     }
@@ -249,6 +272,7 @@ public class BossBarManager {
     }
 
     public Set<String> getBossBarNames() {
+        // El keySet() de LinkedHashMap ya mantiene el orden de inserción
         return bossBarModels.keySet();
     }
 }

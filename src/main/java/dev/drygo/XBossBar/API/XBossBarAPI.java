@@ -7,12 +7,14 @@ import org.bukkit.entity.Player;
 import dev.drygo.XBossBar.Managers.BossBarManager;
 import dev.drygo.XBossBar.Models.BossBarModel;
 
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class XBossBarAPI {
 
-    public static void createBossBar(String id, String title, BarColor color, BarStyle style, boolean perplayer) {
-        BossBarModel model = new BossBarModel(title, color, style, 1.0, perplayer);
+    public static void createBossBar(String id, String title, BarColor color, BarStyle style, boolean perPlayer) {
+        BossBarModel model = new BossBarModel(title, color, style, 1.0, perPlayer);
         BossBarManager.createBossBar(id, model);
     }
 
@@ -24,12 +26,28 @@ public class XBossBarAPI {
         BossBarManager.clearAllBossBars();
     }
 
-    public static void addPlayerToBossBar(String id, Player player) {
+    public static void addPlayer(String id, Player player) {
         BossBarManager.addPlayerToBossBar(id, player);
     }
 
-    public static void removePlayerFromBossBar(String id, Player player) {
+    public static void removePlayer(String id, Player player) {
         BossBarManager.removePlayerFromBossBar(id, player);
+    }
+
+    public static boolean hasPlayer(String id, Player player) {
+        return BossBarManager.hasPlayerBossBar(player, id);
+    }
+
+    public static boolean hasPlayer(String id, UUID uuid) {
+        return BossBarManager.hasPlayerBossBar(uuid, id);
+    }
+
+    public static Set<String> getPlayerBossBars(Player player) {
+        return  BossBarManager.getPlayerBossBars(player);
+    }
+
+    public static Set<String> getPlayerBossBars(UUID playerId) {
+        return  BossBarManager.getPlayerBossBars(playerId);
     }
 
     public static void setTitle(String id, String title) {

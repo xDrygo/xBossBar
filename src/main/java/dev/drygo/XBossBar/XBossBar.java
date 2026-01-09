@@ -1,5 +1,6 @@
 package dev.drygo.XBossBar;
 
+import dev.drygo.XBossBar.Utils.DebugUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 import dev.drygo.XBossBar.Managers.BossBarManager;
 import dev.drygo.XBossBar.Managers.ConfigManager;
@@ -18,6 +19,7 @@ public class XBossBar extends JavaPlugin {
         BossBarManager.init(this);
         ConfigManager.init(this);
         ChatUtils.init(this);
+        DebugUtils.init(this);
         BossBarManager.startBossBarUpdateTask();
         LoadUtils.init(this);
         LoadUtils.loadFeatures();

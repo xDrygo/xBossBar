@@ -1,5 +1,5 @@
 prefix: "#ff4b18&lx&r&f&lBossBar &8»&r"
-command:
+commands:
   usage: "%prefix% #FF0000🚫 Unknown Command. &7Use &f/xbb help &7to get command list."
   create:
     usage: "%prefix% #FF0000🚫 Invalid Usage. &7Use &f/xbb create <name> <color> <style> <per-player> <title>"

@@ -1,4 +1,4 @@
-package dev.drygo.XBossBar.Handlers;
+package dev.drygo.xbossbar.command;
 
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
@@ -7,14 +7,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import dev.drygo.XBossBar.Managers.BossBarManager;
-import dev.drygo.XBossBar.Managers.ConfigManager;
-import dev.drygo.XBossBar.Models.BossBarModel;
-import dev.drygo.XBossBar.Utils.ChatUtils;
-import dev.drygo.XBossBar.Utils.LoadUtils;
-import dev.drygo.XBossBar.XBossBar;
+import dev.drygo.xbossbar.manager.BossBarManager;
+import dev.drygo.xbossbar.manager.ConfigManager;
+import dev.drygo.xbossbar.model.BossBarModel;
+import dev.drygo.xbossbar.util.ChatUtils;
+import dev.drygo.xbossbar.XBossBar;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jetbrains.annotations.NotNull;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,11 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 public class XBossBarCommand implements CommandExecutor {
-    private final XBossBar plugin;
-
-    public XBossBarCommand(XBossBar plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -56,25 +50,21 @@ public class XBossBarCommand implements CommandExecutor {
 
                 int current = 2;
 
-                // Detectar color si es válido
                 try {
                     color = BarColor.valueOf(args[current].toUpperCase());
                     current++;
                 } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ignored) {}
 
-                // Detectar estilo si es válido
                 try {
                     style = BarStyle.valueOf(args[current].toUpperCase());
                     current++;
                 } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ignored) {}
 
-                // Detectar personalizado si es booleano válido
                 if (current < args.length && (args[current].equalsIgnoreCase("true") || args[current].equalsIgnoreCase("false"))) {
                     personalized = Boolean.parseBoolean(args[current]);
                     current++;
                 }
 
-                // Verificar que quede al menos un argumento para el título
                 if (current >= args.length) {
                     sender.sendMessage(ChatUtils.getMessage("commands.create.usage", null));
                     return false;
@@ -340,14 +330,12 @@ public class XBossBarCommand implements CommandExecutor {
                 return true;
             }
             case "reload" -> {
-                Player target = (sender instanceof Player) ? (Player) sender : null;
-                try {
-                    LoadUtils.loadConfigFiles();
-                } catch (Exception e) {
-                    sender.sendMessage(ChatUtils.getMessage("commands.reload.error", target));
-                    return false;
+                if (!sender.hasPermission("xbossbar.reload") && !sender.hasPermission("xbossbar.admin") && !sender.isOp()) {
+                    sender.sendMessage(ChatUtils.getMessage("error.no_permission", null));
+                    return true;
                 }
-                sender.sendMessage(ChatUtils.getMessage("commands.reload.success", target));
+                ConfigManager.reloadAll();
+                sender.sendMessage(ChatUtils.getMessage("commands.reload.success", null));
             }
 
             default -> sender.sendMessage(ChatUtils.getMessage("commands.usage", null));
@@ -356,24 +344,30 @@ public class XBossBarCommand implements CommandExecutor {
         return false;
     }
     private void infoXBossBar(CommandSender sender) {
-        String placeholderStatus = plugin.enabledPAPI() ? "#a0ff72✔" : "#ff7272✖";
+        String placeholderStatus = XBossBar.getInstance().enabledPAPI() ? "#a0ff72✔" : "#ff7272✖";
 
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("&8                            #ff4b18&lx&r&lBossBar &8» &r&fInfo"));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("#fff18d&l                           ᴍᴀᴅᴇ ʙʏ"));
-        sender.sendMessage(ChatUtils.formatColor("&f                   Drygo #707070» &7&o(@33drygo / drygo.dev)"));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("#fff18d&l                  ʀᴜɴɴɪɴɢ ᴘʟᴜɢɪɴ ᴠᴇʀꜱɪᴏɴ"));
-        sender.sendMessage(ChatUtils.formatColor("&f                                    " + XBossBar.version));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("#fff18d&l                      ꜰᴇᴀᴛᴜʀᴇꜱ ᴇɴᴀʙʟᴇᴅ"));
-        sender.sendMessage(ChatUtils.formatColor("&f                           ᴘʟᴀᴄᴇʜᴏʟᴅᴇʀᴀᴘɪ #707070» #FFFAAB" + placeholderStatus));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("#fff18d&l               ᴅʀʏɢᴏ'ꜱ ɴᴏᴛᴇ ᴏꜰ ᴛʜᴇ ᴠᴇʀꜱɪᴏɴ"));
-        sender.sendMessage(ChatUtils.formatColor("&f  #FFFAAB      Damn, 2 versions in one day, this plugin is hard."));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
-        sender.sendMessage(ChatUtils.formatColor("&7"));
+        List<String> info = List.of(
+                "&7",
+                "&7",
+                "&8                            #ff4b18&lx&r&lBossBar &8» &r&fInfo",
+                "&7",
+                "#fff18d&l                           ᴍᴀᴅᴇ ʙʏ",
+                "&f                   Drygo #707070» &7&o(@33drygo / drygo.dev)",
+                "&7",
+                "#fff18d&l                  ʀᴜɴɴɪɴɢ ᴘʟᴜɢɪɴ ᴠᴇʀꜱɪᴏɴ",
+                "&f                                    " + XBossBar.getInstance().getPluginMeta().getVersion(),
+                "&7",
+                "#fff18d&l                      ꜰᴇᴀᴛᴜʀᴇꜱ ᴇɴᴀʙʟᴇᴅ",
+                "&f                           ᴘʟᴀᴄᴇʜᴏʟᴅᴇʀᴀᴘɪ #707070» #FFFAAB" + placeholderStatus,
+                "&7",
+                "#fff18d&l               ᴅʀʏɢᴏ'ꜱ ɴᴏᴛᴇ ᴏꜰ ᴛʜᴇ ᴠᴇʀꜱɪᴏɴ",
+                "&f  #FFFAAB      Damn, 2 versions in one day, this plugin is hard.",
+                "&7",
+                "&7"
+        );
+
+        for (String line : info) {
+            sender.sendMessage(ChatUtils.formatColor(line));
+        }
     }
 }

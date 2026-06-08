@@ -1,20 +1,15 @@
-package dev.drygo.XBossBar.Hooks;
+package dev.drygo.xbossbar.hook;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import dev.drygo.XBossBar.Managers.BossBarManager;
-import dev.drygo.XBossBar.Models.BossBarModel;
-import dev.drygo.XBossBar.XBossBar;
-import org.jspecify.annotations.NonNull;
+import dev.drygo.xbossbar.manager.BossBarManager;
+import dev.drygo.xbossbar.model.BossBarModel;
+import dev.drygo.xbossbar.XBossBar;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class XBossBarExpansion extends PlaceholderExpansion {
 
-    private final XBossBar plugin;
-
-    public XBossBarExpansion(XBossBar plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public String getIdentifier() {
@@ -23,12 +18,12 @@ public class XBossBarExpansion extends PlaceholderExpansion {
 
     @Override
     public String getAuthor() {
-        return "Drygo";
+        return "33drygo";
     }
 
     @Override
     public String getVersion() {
-        return plugin.getDescription().getVersion();
+        return XBossBar.getInstance().getPluginMeta().getVersion();
     }
 
     @Override

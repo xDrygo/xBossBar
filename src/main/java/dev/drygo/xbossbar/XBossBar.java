@@ -1,29 +1,25 @@
-package dev.drygo.XBossBar;
+package dev.drygo.xbossbar;
 
-import dev.drygo.XBossBar.Utils.DebugUtils;
+import dev.drygo.xbossbar.manager.BossBarManager;
+import dev.drygo.xbossbar.manager.ConfigManager;
+import dev.drygo.xbossbar.util.ChatUtils;
+import dev.drygo.xbossbar.util.LoadUtils;
+import dev.drygo.xbossbar.util.LogsUtils;
 import org.bukkit.plugin.java.JavaPlugin;
-import dev.drygo.XBossBar.Managers.BossBarManager;
-import dev.drygo.XBossBar.Managers.ConfigManager;
-import dev.drygo.XBossBar.Utils.ChatUtils;
-import dev.drygo.XBossBar.Utils.LoadUtils;
-import dev.drygo.XBossBar.Utils.LogsUtils;
 
 public class XBossBar extends JavaPlugin {
-    public static String prefix;
-    public static String version;
+    private static XBossBar instance;
+
     public static boolean enabledPAPI = false;
 
     @Override
     public void onEnable() {
-        version = getDescription().getVersion();
-        BossBarManager.init(this);
+        instance = this;
+        BossBarManager.init();
         ConfigManager.init(this);
         ChatUtils.init(this);
-        DebugUtils.init(this);
         BossBarManager.startBossBarUpdateTask();
-        LoadUtils.init(this);
         LoadUtils.loadFeatures();
-        LogsUtils.init(this);
         LogsUtils.sendStartupMessage();
         LogsUtils.sendUpdateMessage();
     }
@@ -34,6 +30,9 @@ public class XBossBar extends JavaPlugin {
         LogsUtils.sendShutdownMessage();
     }
 
+    public static XBossBar getInstance() {
+        return instance;
+    }
     public boolean enabledPAPI() {
         return enabledPAPI;
     }

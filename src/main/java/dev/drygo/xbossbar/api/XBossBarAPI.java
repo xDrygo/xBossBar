@@ -1,13 +1,12 @@
-package dev.drygo.XBossBar.API;
+package dev.drygo.xbossbar.api;
 
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-import dev.drygo.XBossBar.Managers.BossBarManager;
-import dev.drygo.XBossBar.Models.BossBarModel;
+import dev.drygo.xbossbar.manager.BossBarManager;
+import dev.drygo.xbossbar.model.BossBarModel;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 

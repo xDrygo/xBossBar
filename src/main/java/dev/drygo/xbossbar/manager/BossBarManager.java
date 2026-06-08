@@ -1,19 +1,19 @@
-package dev.drygo.XBossBar.Managers;
+package dev.drygo.xbossbar.manager;
 
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import dev.drygo.XBossBar.Models.BossBarModel;
-import dev.drygo.XBossBar.XBossBar;
-import dev.drygo.XBossBar.Utils.DebugUtils;
+import dev.drygo.xbossbar.model.BossBarModel;
+import dev.drygo.xbossbar.XBossBar;
+import dev.drygo.xbossbar.util.DebugUtils;
 
 import java.util.*;
 
 public class BossBarManager {
-
     private static XBossBar plugin;
+
     private static final Map<String, BossBar> globalBars = new LinkedHashMap<>();
     private static final Map<String, Map<UUID, BossBar>> personalizedBars = new LinkedHashMap<>();
     private static final Map<String, BossBarModel> bossBarModels = new LinkedHashMap<>();
@@ -22,8 +22,8 @@ public class BossBarManager {
 
     private static BukkitRunnable bossBarUpdateTask;
 
-    public static void init(XBossBar plugin) {
-        BossBarManager.plugin = plugin;
+    public static void init() {
+        plugin = XBossBar.getInstance();
     }
 
     public static void startBossBarUpdateTask() {

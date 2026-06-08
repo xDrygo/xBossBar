@@ -1,11 +1,11 @@
-package dev.drygo.XBossBar.Models;
+package dev.drygo.xbossbar.model;
 
+import dev.drygo.xbossbar.XBossBar;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
-import dev.drygo.XBossBar.Utils.ChatUtils;
-import dev.drygo.XBossBar.Utils.DevUtils;
+import dev.drygo.xbossbar.util.ChatUtils;
 
 import java.util.Map;
 import java.util.UUID;
@@ -28,7 +28,7 @@ public class BossBarModel {
         this.style = style;
         this.progress = progress;
         this.personalized = personalized;
-        this.resolvedTitle = resolveTitleFor(null); // global title
+        this.resolvedTitle = resolveTitleFor(null);
     }
 
     public String getOriginalTitle() {
@@ -80,7 +80,7 @@ public class BossBarModel {
 
         return perPlayerTitles.computeIfAbsent(player.getUniqueId(), uuid -> {
             String output;
-            if (DevUtils.isPAPIInstalled()) {
+            if (XBossBar.getInstance().enabledPAPI()) {
                 output = PlaceholderAPI.setPlaceholders(player, originalTitle);
             } else {
                 output = originalTitle;
@@ -92,7 +92,7 @@ public class BossBarModel {
     public String resolveTitleFor(Player player) {
         if (player != null) {
             String output;
-            if (DevUtils.isPAPIInstalled()) {
+            if (XBossBar.getInstance().enabledPAPI()) {
                 output = PlaceholderAPI.setPlaceholders(player, originalTitle);
             } else {
                 output = originalTitle;
@@ -100,7 +100,7 @@ public class BossBarModel {
             return ChatUtils.formatColor(output);
         } else {
             String output;
-            if (DevUtils.isPAPIInstalled()) {
+            if (XBossBar.getInstance().enabledPAPI()) {
                 output = PlaceholderAPI.setPlaceholders(null, originalTitle);
             } else {
                 output = originalTitle;

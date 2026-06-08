@@ -1,8 +1,8 @@
 name: xBossBar
-main: dev.drygo.XBossBar.XBossBar
-version: 1.1.1
+main: dev.drygo.xbossbar.XBossBar
+version: '${project.version}'
 api-version: 1.20
-authors: [Drygo]
+authors: [33drygo]
 softdepend:
   - PlaceholderAPI
 description: "Create, edit and show custom BossBars with a few commands, All on a single plugin."
@@ -32,4 +32,6 @@ permissions:
       xbossbar.info:
         default: false
       xbossbar.help:
+        default: false
+      xbossbar.reload:
         default: false

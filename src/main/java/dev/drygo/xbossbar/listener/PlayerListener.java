@@ -1,10 +1,10 @@
-package dev.drygo.XBossBar.Listeners;
+package dev.drygo.xbossbar.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import dev.drygo.XBossBar.Managers.BossBarManager;
+import dev.drygo.xbossbar.manager.BossBarManager;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerListener implements Listener {
